@@ -14,7 +14,7 @@ import tarfile
 # Runs a go subprocess and get the installed version
 def get_installed_go_version():
     out = subprocess.run(['go','version'], capture_output=True).stdout
-    result = re.search('go\d+\.\d+\.\d+', out.decode('utf-8'))
+    result = re.search('go(\d+)\.(\d+)\.?(\d+)?(\w+)*', out.decode('utf-8'))
     if result:
         return result[0]
 
