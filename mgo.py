@@ -2,6 +2,7 @@
 
 from urllib import request
 import argparse
+import os
 import platform
 import json
 import re
@@ -158,6 +159,11 @@ def update_go_version(allow_preview):
         # Extract new version
         print('Extracting file...')
         extract_file(name, go_location)
+
+        # Remove downloaded file
+        print('Removing temporary file...')
+        os.remove(name)
+
         print('Go version updated')
     else:
         print('Your already have the latest version.')
