@@ -222,6 +222,8 @@ def install_go_version(install_path, version, allow_preview):
         print('Removing temporary file...')
         os.remove(name)
         print('Installation complete')
+        bin_path = os.path.abspath(install_path + os.sep + 'go' + os.sep + 'bin')
+        print('Make sure ' + bin_path + ' is on your PATH')
 
 def run():
     parser = argparse.ArgumentParser(description='Manage go installation')
