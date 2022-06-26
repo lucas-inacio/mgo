@@ -274,7 +274,9 @@ def run():
         releases = get_go_releases()
         if releases:
             total = len(releases)
-            count = int(args.count) or 10
+            count = 10
+            if args.count:
+                count = int(args.count)
             for release in releases[:total - count - 1:-1]:
                 print(release)
     else:
