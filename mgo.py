@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 import tarfile
+import zipfile
 
 # Runs a go subprocess and get the installed version
 def get_installed_go_version():
@@ -114,8 +115,8 @@ def donwload_file(name):
 # Remove current go installtion
 def remove_installation():
     go_location = shutil.which('go')
-    go_location = go_location[:go_location.rindex('/bin')]
-    parent_location = go_location[:go_location.rindex('/go')]
+    go_location = go_location[:go_location.rindex(os.sep + 'bin')]
+    parent_location = go_location[:go_location.rindex(os.sep + 'go')]
     if go_location:
         shutil.rmtree(go_location)
     return parent_location
@@ -125,7 +126,8 @@ def extract_file(name, location):
         compressed_file = tarfile.open(name, mode='r:gz')
         compressed_file.extractall(path=location)
     elif name.endswith('.zip'):
-        pass
+        compressed_file = zipfile.ZipFile(name)
+        compressed_file.extractall(path=location)
 
 
 def progress_report(count, blocksize, totalsize):
@@ -155,6 +157,7 @@ def update_go_version(allow_preview):
         # Remove current installtion
         print('Removing current installation...')
         go_location = remove_installation()
+        print(go_location)
 
         # Extract new version
         print('Extracting file...')
