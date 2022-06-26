@@ -7,6 +7,7 @@ Manage go installation
 * update - update go version
 * install - install go
 * available - list available go versions
+* uninstall - remove go installation
 
 Use `python mgo.py <command> -h` for further explanation
 
