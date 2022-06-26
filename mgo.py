@@ -73,10 +73,10 @@ def compare_versions(ver_info1, ver_info2):
     result += 100000 * (ver_info1['major'] - ver_info2['major'])
     result += 10 * (ver_info1['minor'] - ver_info2['minor'])
     result += ver_info1['patch'] - ver_info2['patch']
-    if ver_info1['is_beta']: result += 1
-    if ver_info1['is_release_candidate']: result += 2
-    if ver_info2['is_beta']: result -= 1
-    if ver_info2['is_release_candidate']: result -= 2
+    if ver_info1['is_beta']: result -= 1
+    if ver_info1['is_release_candidate']: result -= 2
+    if ver_info2['is_beta']: result += 1
+    if ver_info2['is_release_candidate']: result += 2
     return result
 
 # Returns True if ver2 is newer than ver1. Returns False otherwise.
