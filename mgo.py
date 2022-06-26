@@ -160,7 +160,7 @@ archMap = {
     'aarch64': 'arm64',
     'arm64': 'arm64',
     'arm': 'armv6l',
-    'arm6vl': 'armv6l'
+    'armv6l': 'armv6l'
 }
 extensionMap = {
     'linux': '.tar.gz',
