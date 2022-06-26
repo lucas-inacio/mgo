@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from urllib import request
+from urllib.error import HTTPError
 import argparse
 import os
 import platform
@@ -8,7 +9,6 @@ import json
 import re
 import shutil
 import subprocess
-import sys
 import tarfile
 import zipfile
 
@@ -29,6 +29,19 @@ def get_go_releases():
         releases = [jsonResponse[x]['ref'] for x in range(tagCount)]
         releases = [x[x.rindex('/')+1:] for x in releases]
         return releases
+
+# Returns the latest go version string available
+# If allow_preview is True include betas and release candidates
+def get_go_release(allow_preview=False):
+    releases = get_go_releases()
+    if releases:
+        for version in releases[::-1]:
+            ver_info = parse_version(version)
+            if ver_info['is_beta'] or ver_info['is_release_candidate']:
+                if allow_preview:
+                    return version
+            else:
+                return version
 
 # Returns a dictionary with fields version, major, minor, patch, is_beta and is_release_candidate
 def parse_version(ver):
@@ -104,6 +117,7 @@ def build_release_file_name(version):
     system = platform.system().lower()
     arch = archMap[platform.machine()]
     extension = extensionMap[system]
+    version = version if version.find('go') == 0 else 'go' + version
     name = version + '.' + system + '-' + arch + extension
     return name
 
@@ -173,42 +187,98 @@ def update_go_version(allow_preview):
 
         print('Go version updated')
     else:
-        print('Your already have the latest version.')
+        print('Your already have the latest version')
+
+def install_go_version(install_path, version, allow_preview):
+    target_version = version
+    if not target_version:
+        release = get_go_release(allow_preview)
+        if release:
+            target_version = release
+        else:
+            raise RuntimeError('Could not find a go release')
+
+    if parse_version(target_version):
+        name = build_release_file_name(target_version)
+
+        print('Downloading go version ' + target_version)
+        donwload_file(name)
+
+        # Create directory if it does not exist
+        if not os.path.isdir(install_path):
+            os.mkdir(install_path)
+
+        print('Extracting file...')
+        extract_file(name, install_path)
+
+        # Remove downloaded file
+        print('Removing temporary file...')
+        os.remove(name)
+        print('Installation complete')
 
 def run():
-    parser = argparse.ArgumentParser(description='Manage go installation')
-
+    parser = argparse.ArgumentParser(description='manage go installation')
     # Subparser for each command
     subparsers = parser.add_subparsers(dest='cmd')
 
     # Show current version
-    status_parser = subparsers.add_parser('status', help='Show installed go version')
+    status_parser = subparsers.add_parser('status', help='show installed go version')
 
     # Check for new version
-    check_parser = subparsers.add_parser('check', help='Check if there is an update')
-    check_parser.add_argument('-p', '--preview', help='Include beta or release candidates', action='store_true')
+    check_parser = subparsers.add_parser('check', help='check if there is an update')
+    check_parser.add_argument('-p', '--preview', help='include beta or release candidates', action='store_true')
 
     # Update version
-    update_parser = subparsers.add_parser('update', help='Update go version')
-    update_parser.add_argument('-p', '--preview', help='Include beta or release candidates', action='store_true')
-    args = parser.parse_args()
+    update_parser = subparsers.add_parser('update', help='update go version')
+    update_parser.add_argument('-p', '--preview', help='include beta or release candidates', action='store_true')
+
+    # Install specific version
+    install_parser = subparsers.add_parser('install', help='install go')
+    install_parser.add_argument('path', help='installation directory')
+    install_parser.add_argument('-v', '--version', help='specify go version to install (defaults to latest stable if not provided)')
+    install_parser.add_argument('-p', '--preview', help='include beta or release candidates', action='store_true')
+
+    # List available versions
+    available_parser = subparsers.add_parser('available', help='list available go versions')
+    available_parser.add_argument('-c', '--count', help='limit list size (defaults to 10)')
 
     # Execute commands
+    args = parser.parse_args()
     if args.cmd == 'status':
-        print(get_installed_go_version())
-    
-    if args.cmd == 'check':
+        version = get_installed_go_version()
+        if version:
+            print(get_installed_go_version())
+        else:
+            print('Could not find a valid go installation')
+    elif args.cmd == 'check':
         version = get_update_version(args.preview)
         if version:
             print(version)
         else:
             print('No update available')
-
-    if args.cmd == 'update':
+    elif args.cmd == 'update':
         try:
             update_go_version(args.preview)
         except PermissionError as e:
             print('Failed. Need privileged permission.')
+    elif args.cmd == 'install':
+        try:
+            install_go_version(args.path, args.version, args.preview)
+        except PermissionError as e:
+            print('Failed. Need privileged permission.')
+        except HTTPError as e:
+            print(e)
+        except RuntimeError as e:
+            print(e)
+    elif args.cmd == 'available':
+        releases = get_go_releases()
+        if releases:
+            total = len(releases)
+            count = int(args.count) or 10
+            for release in releases[:total - count - 1:-1]:
+                print(release)
+    else:
+        parser.print_help()
 
 if __name__ == '__main__':
     run()
