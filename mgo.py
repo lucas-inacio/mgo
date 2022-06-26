@@ -153,7 +153,13 @@ def progress_report(count, blocksize, totalsize):
 
 archMap = {
     'AMD64': 'amd64',
-    'x86_64': 'amd64'
+    'x86_64': 'amd64',
+    'i386': '386',
+    'i686': '386',
+    '386': '386',
+    'aarch64': 'arm64',
+    'arm64': 'arm64',
+    'arm': 'armv6l'
 }
 extensionMap = {
     'linux': '.tar.gz',
