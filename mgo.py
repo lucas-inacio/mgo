@@ -217,7 +217,7 @@ def install_go_version(install_path, version, allow_preview):
         print('Installation complete')
 
 def run():
-    parser = argparse.ArgumentParser(description='manage go installation')
+    parser = argparse.ArgumentParser(description='Manage go installation')
     # Subparser for each command
     subparsers = parser.add_subparsers(dest='cmd')
 
