@@ -28,6 +28,9 @@ def build_parser():
     available_parser = subparsers.add_parser('available', help='list available go versions')
     available_parser.add_argument('-c', '--count', help='limit list size (defaults to 10)')
 
+    # Uninstall go installation
+    uninstall_parser = subparsers.add_parser('uninstall', help='remove go installation')
+
     return parser
 
 def status_command():
@@ -69,3 +72,11 @@ def available_command(count):
             list_size = int(count)
         for release in releases[:total - list_size - 1:-1]:
             print(release)
+
+def uninstall_command():
+    print('Removing go installation...')
+    location = remove_installation()
+    if location:
+        print('Go removed succesfully from ' + location)
+    else:
+        print('Go not found')

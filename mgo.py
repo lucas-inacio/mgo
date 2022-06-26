@@ -16,6 +16,8 @@ def run():
         install_command(args.path, args.version, args.preview)
     elif args.cmd == 'available':
         available_command(args.count)
+    elif args.cmd == 'uninstall':
+        uninstall_command()
     else:
         parser.print_help()
 

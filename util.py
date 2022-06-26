@@ -129,11 +129,12 @@ def donwload_file(name):
 # Remove current go installtion
 def remove_installation():
     go_location = shutil.which('go')
-    go_location = go_location[:go_location.rindex(os.sep + 'bin')]
-    parent_location = go_location[:go_location.rindex(os.sep + 'go')]
     if go_location:
-        shutil.rmtree(go_location)
-    return parent_location
+        go_location = go_location[:go_location.rindex(os.sep + 'bin')]
+        parent_location = go_location[:go_location.rindex(os.sep + 'go')]
+        if go_location:
+            shutil.rmtree(go_location)
+        return parent_location
 
 def extract_file(name, location):
     if name.endswith('.tar.gz'):
