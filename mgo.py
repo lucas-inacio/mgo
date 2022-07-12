@@ -26,3 +26,5 @@ if __name__ == '__main__':
         run()
     except KeyboardInterrupt:
         print('Operation cancelled')
+    except FileNotFoundError:
+        print('Go not found')
