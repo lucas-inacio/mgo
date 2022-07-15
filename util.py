@@ -157,6 +157,7 @@ archMap = {
     'aarch64': 'arm64',
     'arm64': 'arm64',
     'arm': 'armv6l',
+    'armv7l': 'armv6l',
     'armv6l': 'armv6l'
 }
 extensionMap = {
