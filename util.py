@@ -191,7 +191,7 @@ def update_go_version(allow_preview):
 
         print('Go version updated')
     else:
-        print('Your already have the latest version')
+        print('You already have the latest version')
 
 def install_go_version(install_path, version, allow_preview):
     target_version = version
