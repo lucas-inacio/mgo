@@ -8,6 +8,25 @@ import subprocess
 import tarfile
 import zipfile
 
+archMap = {
+    'AMD64': 'amd64',
+    'x86_64': 'amd64',
+    'i386': '386',
+    'i686': '386',
+    '386': '386',
+    'x86': '386',
+    'aarch64': 'arm64',
+    'arm64': 'arm64',
+    'arm': 'armv6l',
+    'armv7l': 'armv6l',
+    'armv6l': 'armv6l'
+}
+extensionMap = {
+    'linux': '.tar.gz',
+    'windows': '.zip',
+    'darwin': '.pkg'
+}
+
 # Runs a go subprocess and get the installed version
 def get_installed_go_version():
     out = subprocess.run(['go','version'], capture_output=True).stdout
@@ -148,23 +167,6 @@ def extract_file(name, location):
 def progress_report(count, blocksize, totalsize):
     print('\rProgress: ' + str(round((count * blocksize) * 100 / totalsize)) + '%', end='')
 
-archMap = {
-    'AMD64': 'amd64',
-    'x86_64': 'amd64',
-    'i386': '386',
-    'i686': '386',
-    '386': '386',
-    'aarch64': 'arm64',
-    'arm64': 'arm64',
-    'arm': 'armv6l',
-    'armv7l': 'armv6l',
-    'armv6l': 'armv6l'
-}
-extensionMap = {
-    'linux': '.tar.gz',
-    'windows': '.zip',
-    'darwin': '.pkg'
-}
 def update_go_version(allow_preview):
     # Check if there is an update available
     version = get_update_version(allow_preview)
